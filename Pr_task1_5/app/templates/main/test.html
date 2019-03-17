@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="tb">
+    <p>数据</p>
+    <p>{{ tpbc_data }}</p>
+    <p>表格</p>
+    <table>
+    {% for r in tpbc_res %}
+        <tr>
+            <td>{{r.fld_brand_name}}</td>
+            <td>{{r.fld_sale_count}}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+<div class="tb">
+    <p>数据</p>
+    <p>{{ tpcc_data }}</p>
+    <p>表格</p>
+    <table>
+    {% for r in tpcc_res %}
+        <tr>
+            <td>{{r.fld_phone_color}}</td>
+            <td>{{r.fld_sale_count}}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+<div class="tb">
+    <p>数据</p>
+    <p>{{ tpsc_data }}</p>
+    <p>表格</p>
+    <table>
+    {% for r in tpsc_res %}
+        <tr>
+            <td>{{r.fld_phone_size}}</td>
+            <td>{{r.fld_sale_count}}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+
+
+</body>
+</html>

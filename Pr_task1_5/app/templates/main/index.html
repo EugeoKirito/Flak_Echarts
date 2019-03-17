@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>手机数据分析实训一</title>
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/echarts.min.js"></script>
+
+</head>
+<style>
+    html , body , .content {
+    width:100%;
+    height:100%;
+
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    background-color: #ccc;
+}
+.content {
+    padding: 40px;
+}
+.header {
+    height: 10%;
+    width: 100%;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 60px;
+    text-align: center;
+}
+.body {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+
+
+}
+.chartBox {
+    width: 100%;
+    height: 80%;
+    margin-bottom:40px;
+}
+
+</style>
+<body>
+
+
+<div class="content">
+    <div class="header">手机数据分析实训一</div>
+    <div class="body">
+        <div class="chartBox" id="chartBox1"></div>
+        <div class="chartBox" id="chartBox2"></div>
+        <div class="chartBox" id="chartBox3"></div>
+    </div>
+</div>
+</body>
+<script>
+
+
+
+
+
+
+var dom1 = "chartBox1";
+var dom2 = "chartBox2";
+var dom3 = "chartBox3";
+var chartObj1 = {};
+var chartObj2 = {};
+var chartObj3 = {};
+var dataArr1 = [];
+var dataArr2 = [];
+var dataArr3 = [];
+var option1 = {};
+var option2 = {};
+var option3 = {};
+
+initEcharts(dataArr1,dataArr2,dataArr3, dom1,dom2,dom3);
+
+setBarOption(dataArr1);
+setPieOption(dataArr2);
+setLineOption(dataArr3);
+
+draw(chartObj1,option1);
+draw(chartObj2,option2);
+draw(chartObj3,option3);
+
+
+
+
+    function initEcharts(data1,data2,data3, dom1,dom2,dom3) {
+    chartObj1= echarts.init(document.getElementById(dom1));
+    chartObj2= echarts.init(document.getElementById(dom2));
+    chartObj3= echarts.init(document.getElementById(dom3));
+
+
+    var da1={{tpbc_data|safe}};
+    var da2={{tpcc_data|safe}};
+    var da3={{tpsc_data|safe}};
+
+    var key1=[];
+    var value1=[];
+    var key3=[];
+    var value3=[];
+    for (var i in da1){
+        for (var j in da1[i]){
+        key1.push(j);
+        value1.push(da1[i][j]);
+
+
+
+    }};
+    dataArr1=[key1,value1];
+
+
+    for (var i in da2){
+        for (var j in da2[i]){
+        dataArr2[i]={'value':da2[i][j],'name':j}
+
+      }};
+
+
+for (var index in da3) {
+       for (var key in da3[index]) {
+       if (key.indexOf('英寸') !=-1){
+        var newKey=key.replace('英寸','');
+        da3[index][newKey]=da3[index][key];
+       delete da3[index][key]
+        }
+
+
+
+       }
+
+    }
+
+
+
+
+    var newKey3=[];
+    var newValue3=[];
+
+
+    for (var index in da3) {
+    for (var key in da3[index]) {
+    if (key3.indexOf(key)===-1) {
+     key3.push(key);
+     value3.push(da3[index][key]);
+
+    }
+    else {
+        newKey3.push(key);
+        newValue3.push(da3[index][key])
+    }
+    }
+    }
+   // console.log(da3)
+    //console.log(key3);
+    //console.log(value3);
+   // console.log(newKey3);
+   // console.log(newValue3);
+
+    for (var i in key3) {
+    for (var j in newKey3) {
+      if (key3[i]==newKey3[j]) {
+
+      console.log(value3[i],newValue3[j])
+      value3[i]=parseInt(value3[i])+parseInt(newValue3[j])
+      console.log(value3[i])
+
+      }
+
+    }
+
+
+    }
+  dataArr3=[key3,value3]
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    function setBarOption(data) {
+
+        option1 = {
+         title:{
+            text:'手机品牌对销量的影响',
+            borderColor:'red',
+            x:"left",
+            y:'top',
+
+
+         },
+         tooltip:{
+         trigger:'axis',
+            axisPointer:{
+                type:'shadow',
+                shadowStyle:{color:'rgba(150,150,150,0.3)', width:'auto',type:'default'},
+            },
+            formatter:'{b}-{c}'
+         },
+         toolbox:{
+         feature:{dataView:{readOnly:true},magicType:{type:['bar','line']},saveAsImage:{}},
+
+         },
+         grid:{show:true,borderColor:'white',backgroundColor:'rgba(128,128,128,0.5)'},
+         dataZoom:{},
+         xAxis:{
+
+            name:'名称',
+            nameRotate:20,
+            nameTextStyle:{color:'blue', fontSize:20},
+            axisLabel:{
+            interval:0,
+            rotate:-80,
+
+
+            },
+            type:'category',
+            data:dataArr1[0],
+
+
+
+         },
+         yAxis:{
+
+            type:'value',
+            formatter:"{value}-台"
+
+
+         },
+         series:[{
+         name:'销量',
+         type:'bar',
+         itemStyle:{normal:{  color: function(params) {
+                        // build a color map as your need.
+                        var colorList = [
+                        'yellow','blue','green','#ACC100','#ASD120',
+                          '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
+                           '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
+                           '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
+                        ];
+                        return colorList[params.dataIndex]
+             },
+             label:{show :true,position:'top'},
+
+
+
+         }},
+
+         data:dataArr1[1],
+
+         markPoint:{data:[{type:'max',name:'max'},
+         {type:'min',name:'min'}],
+         label:{show:true,formatter : function (data) {return data.data.name +':' + data.value}}
+         },
+         markLine:{data:[{type:'average',name:'平均值'}],
+          label:{show:true,formatter : function (data) {return data.data.name +':' + data.value}}
+         }
+         ,
+         animationDelay:function (idx) {return idx * 100}
+
+
+
+         }],
+         animationEasing:'elasticOut',
+         animationDelayUpdate: function (idx) {
+            return idx * 10+100
+         }
+
+
+
+        };
+    };
+
+   function   setPieOption(data) {
+
+   option2={
+   tooltip: {
+        trigger: 'item',
+        formatter: "{b}: {c} ({d}%)"
+    },
+   title:{text:'pie',left:'center'},
+   legend:{
+   orient:'vertical',
+   x:'left',
+   show :true,
+           formatter: function (name) {
+            var da = this.option2.series[0].data
+
+
+
+            var valueAll=0;
+
+            var len = da.length;
+
+            for (var i =0 ; i<len; i++) {
+             valueAll =valueAll + parseInt(da[i].value)
+               // console.log(valueAll)
+            }
+
+
+
+
+            for (var j =0 ; j< da.length ; j++)
+            if (name == da[j].name ) {
+                var p = (da[j].value / valueAll*100 ).toFixed(2)
+                return name+' '+p+'%'
+            }
+           },
+
+   },
+   series:[{
+    type:'pie',
+
+    center:['50%','60%'],
+    radius:[60,150],
+    //roseType:'area',
+
+    data:dataArr2.sort(function (a, b) { return a.value - b.value; }),
+    calculable : true,
+ itemStyle:{normal:{  color: function(params) {
+                        // build a color map as your need.
+                        var colorList = [
+                        'yellow','cyan','green','purple','pink','white','gray','silver','orange','red','blue','#FFD700',
+                        'black'
+                        ];
+                        return colorList[params.dataIndex]
+             },
+             label:{show :true,position:'top'}
+
+
+         }},
+
+
+
+         }, {
+          type:'pie',
+          tooltip:{show:false},
+            label:{normal:{show:false}},
+            color:'black',
+        center:['50%','60%'],
+           radius:[40,39],
+           data:[{value:100,name:'fake'}]
+           }]
+   }
+
+
+   }
+
+  function  setLineOption(data) {
+
+    option3 = {
+        title:{text:'Line ' ,x:'left'},
+        tooltip:{
+            trigger:'axis',
+            axisPointer:{
+                type:'cross',
+                crossStyle:{color:'red'}
+            },
+
+        },
+        toolbox:{
+
+            feature:{
+            dataZoom:{yAxisIndex:false},
+            dataView:{readOnly:true},
+            magicType:{type:['bar','line','stack','tilted']},
+            saveAsImage:{},restore:{show:true}
+            },
+
+        },
+
+        visualMap:{
+        type:'piecewise',
+        top:20,
+        right:0,
+        pieces: [{
+                gt: 0,
+                lte: 10000,
+                color: '#096'
+            }, {
+                gt: 10000,
+                lte: 20000,
+                color: '#ffde33'
+            }, {
+                gt: 20000,
+                lte: 30000,
+                color: '#ff9936'
+            }, {
+                gt: 30000,
+                lte: 40000,
+                color: '#cc0037'
+            }, {
+                gt: 40000,
+                lte: 50000,
+                color: '#660098'
+            }, {
+                gt: 50000,
+                color: '#7e0023'
+            }],
+            outOfRange: {
+                color: '#999'
+            }
+
+        },
+
+        dataZoom:{start:20,end:100},
+        xAxis:{
+            boundaryGap:false,
+            name:'Size',
+            nameRotate:20,
+            nameLocation:'end',
+            nameTextStyle:{color:'red'},
+            axisLabel:{
+            interval:0,
+            rotate:-80,
+
+
+            },
+            onGap:false,
+            type:'category',
+
+            data:dataArr3[0]
+
+        },
+        yAxis:{
+              type:'value',
+            formatter:"{value}-台"
+
+        },
+        series:[{
+
+
+            name :'Count',
+            type:'line',
+            symbol:'circle',
+            symbolRotate:-90,
+            symbolOffset:false,
+            data:dataArr3[1],
+
+            markPoint:{data:[{type:'max',name:'最大值'},{type:'min',name:'最小值'}]},
+            markLine:{data:[{yAxis:'10000'},{yAxis:'20000'},{yAxis:'30000'},{yAxis:'40000'},{yAxis:'50000'},]}
+
+
+
+
+        }],
+
+
+
+
+
+    }
+
+
+
+
+  }
+
+
+    function draw(chartObj,option){
+
+    chartObj.setOption(option);
+
+    }
+
+</script>
+</html>
